@@ -45,7 +45,7 @@ function ip_ranges_write_record($ip, $type, $bid='') {
   db_merge('ip_ranges')
     ->key(array('bid' => $bid))
     ->fields(array(
-      'iid' => $iid,
+      'bid' => $bid,
       'ip' => $ip,
       'type' => $type,
   ))
