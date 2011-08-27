@@ -6,7 +6,7 @@ $schema['ip_ranges'] = array(
     'ip'     => array('type' => 'varchar', 'length' => 31, 'not null' => TRUE, 'default' => ''),
     'type'    => array('type' => 'varchar', 'length' => 5, 'not null' => TRUE, 'default' => ''),
   ),
-  'primary key' => array('iid'),
+  'primary key' => array('bid'),
   'indexes' => array(
     'bid'   => array('bid'),
     'type' => array('type')),
