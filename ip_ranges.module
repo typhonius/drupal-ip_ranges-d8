@@ -2,7 +2,7 @@
 
 function ip_ranges_menu() {
   $items = array();
-  $items['admin/config/people/ip_ranges'] = array(
+  $items['admin/config/people/ip-ranges'] = array(
     'title' => 'IP range bans',
     'description' => 'Manage banned IP addresse ranges.',
     'page callback' => 'ip_ranges_page',
@@ -10,7 +10,7 @@ function ip_ranges_menu() {
     'file' => 'ip_ranges.admin.inc',
     'weight' => 10,
   );
-  $items['admin/config/people/ip_ranges/delete/%ban_ip'] = array(
+  $items['admin/config/people/ip-ranges/delete/%'] = array(
     'title' => 'Delete IP range',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('ip_ranges_delete', 5),
@@ -19,9 +19,22 @@ function ip_ranges_menu() {
   );
 
   return $items;
+  }
+
+/**
+ * Implements hook_permission().
+ */
+function ban_permission() {
+  return array(
+    'ban IP address ranges' => array(
+      'title' => t('Ban IP address ranges'),
+    ),
+  );
+}
+
 
 function ip_ranges_boot() {
-  $whitelist=ip_ranges_get_ip_list('white');
+  $whitelist=ip_ranges_get_ip_list('whitelist');
   $current_ip = ip_address();
  
   foreach ($whitelist as $ip) {
@@ -32,7 +45,7 @@ function ip_ranges_boot() {
     }
 
   if (!isset($whitelisted)) {
-    $blacklist = ip_ranges_get_ip_list('black');
+    $blacklist = ip_ranges_get_ip_list('blacklist');
     foreach ($blacklist as $ip) {
       if (ip_ranges_check_ip($ip->ip, $current_ip)) {
 	    ip_ranges_deny_access();
@@ -48,15 +61,18 @@ function ip_ranges_boot() {
  * Prints a message and exits if access is denied.
  */
 function ip_ranges_deny_access() {
+
   header($_SERVER['SERVER_PROTOCOL'] . ' 403 Forbidden');
   print 'Sorry, ' . check_plain(ip_address()) . ' has been banned.';
   exit();
+
 }
 
 
 function ip_ranges_check_ip($ip, $current_ip) {
   $type = strpos($ip, '-') ? 'range' : 'single';
-  return ($type == 'single') ? $ip->ip == $current_ip : ip_ranges_check_range($ip, $current_ip); 
+  return ($type == 'single') ? $ip == $current_ip : ip_ranges_check_range($ip, $current_ip); 
+
 }
 
 function ip_ranges_check_range($ip, $current_ip) {
@@ -77,7 +93,6 @@ function ip_ranges_write_record($ip, $type, $bid='') {
       'type' => $type,
   ))
     ->execute();
-
 }
 
 function ip_ranges_get_ip_list($type='') {
@@ -86,5 +101,8 @@ function ip_ranges_get_ip_list($type='') {
     $query->condition('list.type', $type, '=')
     ->fields('list', array('ip'));
     }
+  else {
+    $query->fields('list');
+	}
   return  $query->execute()->fetchAll();
 }
