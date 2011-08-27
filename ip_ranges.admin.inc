@@ -11,10 +11,10 @@
  */
 function ip_ranges_page() {
   $rows = array();
-  $header = array(t('banned IP addresses'),t('list type'), t('Operations'));
+  $header = array(t('banned IP addresses'), t('list type'), t('Operations'));
   $ip_list = ip_ranges_get_ip_list();
-  foreach ($ip_list as $ip) { 
-   $rows[] = array(
+  foreach ($ip_list as $ip) {
+    $rows[] = array(
       $ip->ip,
       $ip->type,
       l(t('delete'), "admin/config/people/ip-ranges/delete/$ip->bid"),
@@ -35,15 +35,14 @@ function ip_ranges_page() {
  * Define the form for banning IP addresses.
  *
  * @ingroup forms
- * @see ban_ip_form_validate()
- * @see ban_ip_form_submit()
+ * @see ip_ranges_form_submit()
  */
 function ip_ranges_form($form, $form_state) {
   $form['ip'] = array(
     '#title' => t('IP address'),
     '#type' => 'textfield',
     '#size' => 48,
-	'#required' => 'true',
+    '#required' => 'true',
     '#maxlength' => 40,
     '#description' => t('Enter IP-address (100.100.100.100) or address range (100.100.100.100-100.100.100.150).'),
   );
@@ -56,20 +55,21 @@ function ip_ranges_form($form, $form_state) {
     '#required' => 'true',
     '#description' => t('Enter list type.'),
   );
- 
- $form['actions'] = array('#type' => 'actions');
+  $form['actions'] = array('#type' => 'actions');
   $form['actions']['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Add'),
   );
   $form['#submit'][] = 'ip_ranges_form_submit';
   // No working validation yet. Probably the best solution is to modify the form to have separete fields for the ranges and validate those like normal ip-addresses.
+  // However, since the new Database API handles injection checks and the range will probably get bitmask-support later, this is not that important right now.
   //$form['#validate'][] = 'ban_ip_form_validate';
   return $form;
 }
 
 /*
-function ip_ranges_form_validate($form, &$form_state) {
+  // This is the original form validation from core. Could be used as a starting point.
+ function ip_ranges_form_validate($form, &$form_state) {
   $ip = trim($form_state['values']['ip']);
   if (db_query("SELECT * FROM {banned_ips} WHERE ip = :ip", array(':ip' => $ip))->fetchField()) {
     form_set_error('ip', t('This IP address is already banned.'));
@@ -82,8 +82,11 @@ function ip_ranges_form_validate($form, &$form_state) {
   }
 }
 
-*/
+ */
 
+/**
+ * Form submission handler for ip_ranges_form().
+ */
 function ip_ranges_form_submit($form, &$form_state) {
   $ip = trim($form_state['values']['ip']);
   $ip = preg_replace('/\s+/', '', $ip);
@@ -95,13 +98,14 @@ function ip_ranges_form_submit($form, &$form_state) {
   $form_state['redirect'] = 'admin/config/people/ip-ranges';
   return;
 }
+
 /**
  * IP deletion confirm page.
  *
- * @see ban_ip_delete_submit()
+ * @see ip_ranges_delete_submit()
  */
 function ip_ranges_delete($form, &$form_state, $bid) {
- $form['ip_range'] = array(
+  $form['ip_range'] = array(
     '#type' => 'value',
     '#value' => $bid,
   );
@@ -109,10 +113,10 @@ function ip_ranges_delete($form, &$form_state, $bid) {
 }
 
 /**
- * Process ban_ip_delete form submissions.
+ * Process ip_ranges_delete form submissions.
  */
 function ip_ranges_delete_submit($form, &$form_state) {
- $banned_ip = $form_state['values']['ip_range'];
+  $banned_ip = $form_state['values']['ip_range'];
   db_delete('ip_ranges')
     ->condition('bid', $banned_ip['bid'])
     ->execute();
