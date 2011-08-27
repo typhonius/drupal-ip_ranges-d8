@@ -8,7 +8,7 @@ $schema['ip_ranges'] = array(
   ),
   'primary key' => array('iid'),
   'indexes' => array(
-    'iid'   => array('iid'),
+    'bid'   => array('bid'),
     'type' => array('type')),
 );
 
