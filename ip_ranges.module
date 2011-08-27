@@ -1,5 +1,5 @@
 <?php
-function ip_ranges_page_build() {
+function ip_ranges_boot() {
   $whitelist=ip_ranges_get_ip_list('white');
   $current_ip = ip_address();
  
