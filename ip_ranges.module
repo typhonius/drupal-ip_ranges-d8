@@ -1,4 +1,25 @@
 <?php
+
+function ip_ranges_menu() {
+  $items = array();
+  $items['admin/config/people/ip_ranges'] = array(
+    'title' => 'IP range bans',
+    'description' => 'Manage banned IP addresse ranges.',
+    'page callback' => 'ip_ranges_page',
+    'access arguments' => array('ban IP address ranges'),
+    'file' => 'ip_ranges.admin.inc',
+    'weight' => 10,
+  );
+  $items['admin/config/people/ip_ranges/delete/%ban_ip'] = array(
+    'title' => 'Delete IP range',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('ip_ranges_delete', 5),
+    'access arguments' => array('ban IP address ranges'),
+    'file' => 'ip_ranges.admin.inc',
+  );
+
+  return $items;
+
 function ip_ranges_boot() {
   $whitelist=ip_ranges_get_ip_list('white');
   $current_ip = ip_address();
@@ -20,6 +41,12 @@ function ip_ranges_boot() {
     }
   }
 
+
+/**
+ * Handle denied users.
+ *
+ * Prints a message and exits if access is denied.
+ */
 function ip_ranges_deny_access() {
   header($_SERVER['SERVER_PROTOCOL'] . ' 403 Forbidden');
   print 'Sorry, ' . check_plain(ip_address()) . ' has been banned.';
@@ -53,9 +80,11 @@ function ip_ranges_write_record($ip, $type, $bid='') {
 
 }
 
-function ip_ranges_get_ip_list($type) {
+function ip_ranges_get_ip_list($type='') {
   $query = db_select('ip_ranges', 'list');
-  $query->condition('list.type', $type, '=')
+  if ($type){
+    $query->condition('list.type', $type, '=')
     ->fields('list', array('ip'));
+    }
   return  $query->execute()->fetchAll();
 }
