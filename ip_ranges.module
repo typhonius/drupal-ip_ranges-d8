@@ -1,0 +1,61 @@
+<?php
+function ip_ranges_page_build() {
+  $whitelist=ip_ranges_get_ip_list('white');
+  $current_ip = ip_address();
+ 
+  foreach ($whitelist as $ip) {
+    if (ip_ranges_check_ip($ip->ip, $current_ip)) {
+	  $whitelisted = 1;
+	  break;
+	  }
+    }
+
+  if (!isset($whitelisted)) {
+    $blacklist = ip_ranges_get_ip_list('black');
+    foreach ($blacklist as $ip) {
+      if (ip_ranges_check_ip($ip->ip, $current_ip)) {
+	    ip_ranges_deny_access();
+	    }
+      }
+    }
+  }
+
+function ip_ranges_deny_access() {
+  header($_SERVER['SERVER_PROTOCOL'] . ' 403 Forbidden');
+  print 'Sorry, ' . check_plain(ip_address()) . ' has been banned.';
+  exit();
+}
+
+
+function ip_ranges_check_ip($ip, $current_ip) {
+  $type = strpos($ip, '-') ? 'range' : 'single';
+  return ($type == 'single') ? $ip->ip == $current_ip : ip_ranges_check_range($ip, $current_ip); 
+}
+
+function ip_ranges_check_range($ip, $current_ip) {
+  $ip = explode('-', $ip);
+  list($lower, $upper) = $ip;
+  $lower_dec = (float)sprintf("%u", ip2long($lower));
+  $upper_dec = (float)sprintf("%u", ip2long($upper));
+  $ip_dec = (float)sprintf("%u", ip2long($current_ip));
+  return ( ($ip_dec>=$lower_dec) && ($ip_dec<=$upper_dec) );
+}
+
+function ip_ranges_write_record($ip, $type, $bid='') {
+  db_merge('wc_api_ip_ban_list')
+    ->key(array('bid' => $bid))
+    ->fields(array(
+      'iid' => $iid,
+      'ip' => $ip,
+      'type' => $type,
+  ))
+    ->execute();
+
+}
+
+function ip_ranges_get_ip_list($type) {
+  $query = db_select('wc_api_ip_ban_list', 'list');
+  $query->condition('list.type', $type, '=')
+    ->fields('list', array('ip'));
+  return  $query->execute()->fetchAll();
+}
