@@ -32,7 +32,7 @@ DEVELOPERS
 
 While there is no exactly "API" available, there are some functions you can use in your code if needed:
 
-To ban IP / IP-Range:
+To ban IP-Address / -Range:
 
 ip_ranges_write_record($ip, $type, $bid='')
 
