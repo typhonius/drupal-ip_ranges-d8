@@ -6,8 +6,7 @@
  */
 
 /**
- * Menu callback. Display banned IP ranges.
- *
+ * Menu callback. Displays banned IP ranges.
  */
 function ip_ranges_page() {
   $rows = array();
@@ -29,10 +28,11 @@ function ip_ranges_page() {
     '#rows' => $rows,
   );
 
-  return $build;}
+  return $build;
+}
 
 /**
- * Define the form for banning IP addresses.
+ * Defines the form for banning IP addresses.
  *
  * @ingroup forms
  * @see ip_ranges_form_submit()
@@ -42,7 +42,7 @@ function ip_ranges_form($form, $form_state) {
     '#title' => t('IP address'),
     '#type' => 'textfield',
     '#size' => 48,
-    '#required' => 'true',
+    '#required' => TRUE,
     '#maxlength' => 40,
     '#description' => t('Enter IP-address (100.100.100.100) or address range (100.100.100.100-100.100.100.150).'),
   );
@@ -52,7 +52,7 @@ function ip_ranges_form($form, $form_state) {
     '#multiple' => FALSE,
     '#options' => array('blacklist' => 'blacklist', 'whitelist' => 'whitelist'),
     '#default_value' => 'blacklist',
-    '#required' => 'true',
+    '#required' => TRUE,
     '#description' => t('Enter list type.'),
   );
   $form['actions'] = array('#type' => 'actions');
@@ -113,7 +113,7 @@ function ip_ranges_delete($form, &$form_state, $bid) {
 }
 
 /**
- * Process ip_ranges_delete form submissions.
+ * Processes ip_ranges_delete form submissions.
  */
 function ip_ranges_delete_submit($form, &$form_state) {
   $banned_ip = $form_state['values']['ip_range'];
