@@ -27,7 +27,7 @@ function ip_ranges_menu() {
 /**
  * Implements hook_permission().
  */
-function ban_permission() {
+function ip_ranges_permission() {
   return array(
     'ban IP address ranges' => array(
       'title' => t('Ban IP address ranges'),
