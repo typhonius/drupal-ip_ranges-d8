@@ -15,9 +15,14 @@ Just enable the module as usual.
 
 USAGE
 ============
-After enabling the module, go to admin/config/people/ip-ranges to find form with two elements: "IP address" and "List type"
+After enabling the module, go to admin/config/people/ip-ranges to find form with three elements: 
+"IP range start / Single IP-address"
+"IP range end"
+"List type"
 
-IP-address can be either single IP in the form of 100.100.100.100 or range in the form of 100.100.100.100-100.100.100.150. (This is currently the only allowed range form, other types like bitmasks may come at later stage).
+Two first two fields take an IP-Address in the form of "100.100.100.100". If the second field is filled, 
+they be treated as a range. If you leave it empty, the value from the first field is only used.
+(This is currently the only allowed range form, other types like bitmasks may come at later stage).
 
 Type can be either "blacklist" or "whitelist",
 where blacklisted IP's are denied from the site, and whitelisted are allowed.
@@ -37,7 +42,8 @@ Where both ip and type are entered just like from the ui. $bid, or ban id, is op
 
 To retrieve list of ban records:
 
-ip_ranges_get_ip_list($type='')
+ip_ranges_get_ip_list($type='');
 
-Again, type is either "blacklist", "whitelist" or empty. Return will be array of IP's of requested type.
+Again, type is either "blacklist", "whitelist" or empty. Return will be array of IP's of requested type. 
+Ranges will be like this: "100.100.100.100-100.100.100.200".
 
