@@ -38,7 +38,7 @@ function ip_ranges_page() {
  * @see ip_ranges_form_submit()
  */
 function ip_ranges_form($form, $form_state) {
-  $form['ip-start'] = array(
+  $form['ip_start'] = array(
     '#title' => t('IP range start / Single IP-address'),
     '#type' => 'textfield',
     '#size' => 48,
@@ -46,7 +46,7 @@ function ip_ranges_form($form, $form_state) {
     '#maxlength' => 15,
     '#description' => t('Enter IP-address (100.100.100.100). If range end is specified, it will be used as start of the range, otherwise as a single IP-address.'),
   );
-  $form['ip-end'] = array(
+  $form['ip_end'] = array(
     '#title' => t('IP range end (optional)'),
     '#type' => 'textfield',
     '#size' => 48,
@@ -68,40 +68,38 @@ function ip_ranges_form($form, $form_state) {
     '#type' => 'submit',
     '#value' => t('Add'),
   );
+  $form['#validate'][] = 'ip_ranges_form_validate';
   $form['#submit'][] = 'ip_ranges_form_submit';
-  // No working validation yet. Probably the best solution is to modify the form to have separete fields for the ranges and validate those like normal ip-addresses.
-  // However, since the new Database API handles injection checks and the range will probably get bitmask-support later, this is not that important right now.
-  //$form['#validate'][] = 'ban_ip_form_validate';
   return $form;
 }
 
-/*
-  // This is the original form validation from core. Could be used as a starting point.
- function ip_ranges_form_validate($form, &$form_state) {
-  $ip = trim($form_state['values']['ip']);
-  if (db_query("SELECT * FROM {banned_ips} WHERE ip = :ip", array(':ip' => $ip))->fetchField()) {
-    form_set_error('ip', t('This IP address is already banned.'));
+/**
+ * Form validation handler for ip_ranges_form().
+ */
+function ip_ranges_form_validate($form, &$form_state) {
+  $ip_start = trim($form_state['values']['ip_start']);
+  $ip_end = isset($form_state['values']['ip_end']) ? trim($form_state['values']['ip_end']) : FALSE;
+  if (filter_var($ip_start, FILTER_VALIDATE_IP, FILTER_FLAG_NO_RES_RANGE) == FALSE) {
+    form_set_error('ip_start', t("IP(/range start) is not a valid IP address."));
   }
-  elseif ($ip == ip_address()) {
-    form_set_error('ip', t('You may not block your own IP address.'));
+  elseif ($ip_end && filter_var($ip_end, FILTER_VALIDATE_IP, FILTER_FLAG_NO_RES_RANGE) == FALSE) {
+    form_set_error('ip_end', t("IP range end is not a valid IP address."));
   }
-  elseif (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_RES_RANGE) == FALSE) {
-    form_set_error('ip', t('Enter a valid IP address.'));
+  elseif ($ip_start == ip_address() || ($ip_end && ip_ranges_check_range($ip_start . '-' . $ip_end, ip_address()))) {
+    form_set_error('ip_start', t('You may not block your own IP address.'));
   }
 }
-
- */
 
 /**
  * Form submission handler for ip_ranges_form().
  */
 function ip_ranges_form_submit($form, &$form_state) {
-  $ip_start = trim($form_state['values']['ip-start']);
+  $ip_start = trim($form_state['values']['ip_start']);
   $ip_start = preg_replace('/\s+/', '', $ip_start);
   $ip = $ip_start;
 
-  if ($form_state['values']['ip-end']) {
-    $ip_end = trim($form_state['values']['ip-end']);
+  if ($form_state['values']['ip_end']) {
+    $ip_end = trim($form_state['values']['ip_end']);
     $ip_end = preg_replace('/\s+/', '', $ip_end);
     $ip.='-'.$ip_end;
   }
