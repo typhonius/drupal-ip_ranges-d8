@@ -39,6 +39,7 @@ function ip_ranges_page() {
  */
 function ip_ranges_form($form, $form_state) {
   $form['ip_start'] = array(
+    '#prefix' =>  t('<strong>Note that your own IP-Address is currently <i>'.ip_address().'</i>. Be carefull not to lock yourself out!<br />'.l('Click here to whitelist your own IP-address.', 'admin/config/people/ip-ranges/whitelist_own').'</strong>'),
     '#title' => t('IP range start / Single IP-address'),
     '#type' => 'textfield',
     '#size' => 48,
@@ -86,8 +87,8 @@ function ip_ranges_form_validate($form, &$form_state) {
     form_set_error('ip_end', t("IP range end is not a valid IP address."));
   }
   elseif ($ip_start == ip_address() || ($ip_end && ip_ranges_check_range($ip_start . '-' . $ip_end, ip_address()))) {
-    form_set_error('ip_start', t('You may not block your own IP address.'));
-  }
+  // This fires if users own IP is in the selected range. Currently we wont do anything in that case.
+ }
 }
 
 /**

@@ -19,7 +19,11 @@ function ip_ranges_menu() {
     'page arguments' => array('ip_ranges_delete', 5),
     'access arguments' => array('ban IP address ranges'),
     'file' => 'ip_ranges.admin.inc',
-  );
+  $items['admin/config/people/ip-ranges/whitelist_own'] = array(
+    'page callback' => 'ip_ranges_whitelist_own_address',
+    'access arguments' => array('ban IP address ranges'),
+  ), 
+ );
 
   return $items;
 }
@@ -124,7 +128,7 @@ function ip_ranges_check_range($ip, $current_ip) {
  * @param $bid
  *   (optional) id of the current ban, used when existing record is updated.
  */
-function ip_ranges_write_record($ip, $type, $bid = '') {
+function ip_ranges_write_record($ip, $type, $bid = NULL) {
   db_merge('ip_ranges')
     ->key(array('bid' => $bid))
     ->fields(array(
@@ -155,4 +159,10 @@ function ip_ranges_get_ip_list($type = '') {
     $query->fields('list');
   }
   return $query->execute()->fetchAll();
+}
+
+function ip_ranges_whitelist_own_address(){
+  ip_ranges_write_record(ip_address(), 'whitelist');
+  drupal_set_message('Your own IP-address ('.ip_address().') has been whitelisted.');
+  drupal_goto('admin/config/people/ip-ranges');
 }
