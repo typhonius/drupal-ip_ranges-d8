@@ -19,12 +19,12 @@ function ip_ranges_menu() {
     'page arguments' => array('ip_ranges_delete', 5),
     'access arguments' => array('ban IP address ranges'),
     'file' => 'ip_ranges.admin.inc',
+  );
   $items['admin/config/people/ip-ranges/whitelist_own'] = array(
+    'title' => 'Whitelist your own IP',
     'page callback' => 'ip_ranges_whitelist_own_address',
     'access arguments' => array('ban IP address ranges'),
-  ), 
- );
-
+  );
   return $items;
 }
 
