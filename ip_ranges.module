@@ -163,6 +163,6 @@ function ip_ranges_get_ip_list($type = '') {
 
 function ip_ranges_whitelist_own_address(){
   ip_ranges_write_record(ip_address(), 'whitelist');
-  drupal_set_message('Your own IP-address ('.ip_address().') has been whitelisted.');
+  drupal_set_message(t('Your own IP-address (@ip) has been whitelisted.', array('@ip' => ip_address())));
   drupal_goto('admin/config/people/ip-ranges');
 }
