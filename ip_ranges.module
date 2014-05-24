@@ -1,34 +1,6 @@
 <?php
 
 /**
- * Implements hook_menu().
- */
-function ip_ranges_menu() {
-  $items = array();
-  $items['admin/config/people/ip-ranges'] = array(
-    'title' => 'IP range bans',
-    'description' => 'Manage banned IP addresse ranges.',
-    'page callback' => 'ip_ranges_page',
-    'access arguments' => array('ban IP address ranges'),
-    'file' => 'ip_ranges.admin.inc',
-    'weight' => 10,
-  );
-  $items['admin/config/people/ip-ranges/delete/%'] = array(
-    'title' => 'Delete IP range',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('ip_ranges_delete', 5),
-    'access arguments' => array('ban IP address ranges'),
-    'file' => 'ip_ranges.admin.inc',
-  );
-  $items['admin/config/people/ip-ranges/whitelist_own'] = array(
-    'title' => 'Whitelist your own IP',
-    'page callback' => 'ip_ranges_whitelist_own_address',
-    'access arguments' => array('ban IP address ranges'),
-  );
-  return $items;
-}
-
-/**
  * Implements hook_permission().
  */
 function ip_ranges_permission() {
