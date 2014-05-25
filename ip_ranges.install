@@ -14,6 +14,13 @@ function ip_ranges_schema() {
         'type' => 'serial',
         'unsigned' => TRUE,
         'not null' => TRUE,
+        'description' => 'Primary Key: Unique ip range ID.',
+      ),
+      'uuid' => array(
+        'description' => 'Unique Key: Universally unique identifier for this entity.',
+        'type' => 'varchar',
+        'length' => 128,
+        'not null' => FALSE,
       ),
       'ip' => array(
         'type' => 'varchar',
@@ -27,6 +34,9 @@ function ip_ranges_schema() {
         'not null' => TRUE,
         'default' => '',
       ),
+    ),
+    'unique keys' => array(
+      'uuid' => array('uuid'),
     ),
     'primary key' => array('bid'),
     'indexes' => array(
