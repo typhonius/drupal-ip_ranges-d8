@@ -1,5 +1,6 @@
 services:
   ip_ranges:
     class: Drupal\ip_ranges\EventSubscriber\IPRangesEventSubscriber
+    arguments: ['@request']
     tags:
       - { name: event_subscriber }
