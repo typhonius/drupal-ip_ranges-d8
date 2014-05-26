@@ -37,9 +37,10 @@ class IPRangesListBuilder extends EntityListBuilder {
     return $header + parent::buildHeader();
   }
 
-  public function emptyText() {
-    return $this->t('There are no @label yet.', array('@label' => $this->entityType->getLabel()));
-  }
+// @TODO await resolution of https://drupal.org/node/2274011
+//  public function emptyText() {
+//    return $this->t('There are no @label yet.', array('@label' => $this->entityType->getLabel()));
+//  }
 
   /**
    * {@inheritdoc}
