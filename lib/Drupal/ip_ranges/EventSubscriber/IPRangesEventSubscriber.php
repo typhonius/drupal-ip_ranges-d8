@@ -21,7 +21,9 @@ class IPRangesEventSubscriber implements EventSubscriberInterface {
 
   public function onKernelRequest(GetResponseEvent $event) {
     drupal_set_message('event subscriber');
-    $this->manager->ipIsBanned($this->request->getClientIp());
+    if ($this->manager->ipIsBanned($this->request->getClientIp())) {
+      $this->manager->denyAccess();
+    }
   }
 
   static function getSubscribedEvents() {
