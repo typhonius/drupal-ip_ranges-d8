@@ -5,5 +5,5 @@ services:
     tags:
       - { name: event_subscriber }
   ip_ranges.manager:
-    class: Drupal\ip_ranges\IPRangeManager
+    class: Drupal\ip_ranges\IPRangesManager
     arguments: ['@database']
