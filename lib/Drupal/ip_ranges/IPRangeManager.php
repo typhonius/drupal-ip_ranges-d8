@@ -3,7 +3,6 @@
 namespace Drupal\ip_ranges;
 
 use Drupal\Core\Database\Connection;
-use Symfony\Component\HttpFoundation\Response;
 
 class IPRangeManager {
 
@@ -23,11 +22,6 @@ class IPRangeManager {
     );
 
     return $banned;
-  }
-
-  public function denyAccess() {
-    $response = new Response((t('Sorry, @ip has been banned.', array('@ip' => \Drupal::request()->getClientIp()))), 403);
-    $response->send();
   }
 
 }
