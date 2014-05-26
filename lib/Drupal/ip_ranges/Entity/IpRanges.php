@@ -32,8 +32,8 @@ use Drupal\Core\Field\FieldDefinition;
  *   fieldable = FALSE,
  *   entity_keys = {
  *     "id" = "bid",
- *     "label" = "ip",
- *     "status" = "status",
+ *     "label" = "ip_lower",
+ *     "status" = "type",
  *   },
  *   links = {
  *     "edit-form" = "ip_ranges.edit_form",
@@ -47,26 +47,16 @@ class IpRanges extends ContentEntityBase implements ContentEntityInterface {
     return $this->get('type')->value;
   }
 
-  public function getIpStart() {
-    $ip = $this->get('ip')->value;
-    if (strstr($ip, '-')) {
-      $range = explode('-', $ip);
-      return $range[0];
-    }
-    return $ip;
+  public function getIpLower() {
+    return $this->get('ip_lower')->value;
   }
 
-  public function getIpEnd() {
-    $ip = $this->get('ip')->value;
-    if (strstr($ip, '-')) {
-      $range = explode('-', $ip);
-      return $range[1];
-    }
-    return NULL;
+  public function getIpHigher() {
+    return $this->get('ip_higher')->value;
   }
 
-  public function getIp() {
-    return $this->get('ip')->value;
+  public function getIpDisplay() {
+    return long2ip($this->getIpLower()) . '-' . long2ip($this->getIpHigher());
   }
 
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
@@ -80,7 +70,7 @@ class IpRanges extends ContentEntityBase implements ContentEntityInterface {
       ->setDescription(t('The User Restrictions UUID.'))
       ->setReadOnly(TRUE);
 
-    $fields['ip'] = FieldDefinition::create('string')
+    $fields['ip_lower'] = FieldDefinition::create('string')
       ->setLabel(t('IP'))
       ->setDescription(t('Text mask used for filtering restrictions.
       %: Matches any number of characters, even zero characters.
@@ -88,10 +78,20 @@ class IpRanges extends ContentEntityBase implements ContentEntityInterface {
       ->setRequired(TRUE)
       ->setSettings(array(
         'default_value' => '',
-        'max_length' => 31,
+        'max_length' => 15,
       ));
 
-    $fields['status'] = FieldDefinition::create('boolean')
+    $fields['ip_higher'] = FieldDefinition::create('string')
+      ->setLabel(t('IP'))
+      ->setDescription(t('Text mask used for filtering restrictions.
+      %: Matches any number of characters, even zero characters.
+      _: Matches exactly one character.'))
+      ->setSettings(array(
+        'default_value' => '',
+        'max_length' => 15,
+      ));
+
+    $fields['type'] = FieldDefinition::create('boolean')
       ->setLabel(t('Restriction status'))
       ->setDescription(t('A boolean indicating whether the ip range is whitelisted or blacklisted.'))
       ->setSetting('default_value', 1)

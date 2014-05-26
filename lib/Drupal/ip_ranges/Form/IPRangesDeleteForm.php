@@ -14,7 +14,7 @@ class IPRangesDeleteForm extends ContentEntityConfirmFormBase {
 
   function getQuestion() {
     $entity = $this->entity;
-    return t('Are you sure you want to delete @title?', array('@title' => $entity->label()));
+    return t('Are you sure you want to delete range @range?', array('@range' => $entity->getIpDisplay()));
   }
 
   /**
@@ -40,8 +40,8 @@ class IPRangesDeleteForm extends ContentEntityConfirmFormBase {
     $entity = $this->entity;
     $entity->delete();
 
-    watchdog('ip_ranges', 'Range deleted %title.', array('@title' => $entity->label()));
-    drupal_set_message(t('Range @title has been deleted.', array('@title' => $entity->label())));
+    watchdog('ip_ranges', 'Range deleted @range.', array('@range' => $entity->getIpDisplay()));
+    drupal_set_message(t('Range @range has been deleted.', array('@range' => $entity->getIpDisplay())));
 
     $form_state['redirect_route']['route_name'] = 'ip_ranges.admin_list';
   }

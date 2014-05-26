@@ -22,9 +22,15 @@ function ip_ranges_schema() {
         'length' => 128,
         'not null' => FALSE,
       ),
-      'ip' => array(
+      'ip_lower' => array(
         'type' => 'varchar',
-        'length' => 31,
+        'length' => 15,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'ip_higher' => array(
+        'type' => 'varchar',
+        'length' => 15,
         'not null' => TRUE,
         'default' => '',
       ),
