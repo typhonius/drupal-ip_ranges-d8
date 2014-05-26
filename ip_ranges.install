@@ -23,16 +23,16 @@ function ip_ranges_schema() {
         'not null' => FALSE,
       ),
       'ip_lower' => array(
-        'type' => 'varchar',
+        'type' => 'int',
+        'unsigned' => TRUE,
         'length' => 15,
         'not null' => TRUE,
-        'default' => '',
       ),
       'ip_higher' => array(
-        'type' => 'varchar',
+        'type' => 'int',
+        'unsigned' => TRUE,
         'length' => 15,
         'not null' => TRUE,
-        'default' => '',
       ),
       'type' => array(
         'type' => 'varchar',
