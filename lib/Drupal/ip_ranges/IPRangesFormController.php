@@ -15,14 +15,12 @@ use Drupal\Core\Entity\EntityManagerInterface;
 class IPRangesFormController extends ContentEntityForm implements ContentEntityFormInterface {
 
   protected $own_ip;
-  protected $manager;
 
   /**
    * {@inheritdoc}
    */
-  public function __construct(EntityManagerInterface $entity_manager, IPRangeManager $manager) {
+  public function __construct(EntityManagerInterface $entity_manager) {
     $this->own_ip = \Drupal::request()->getClientIp();
-    $this->manager = $manager;
     parent::__construct($entity_manager);
   }
 
@@ -87,7 +85,9 @@ class IPRangesFormController extends ContentEntityForm implements ContentEntityF
     elseif ($ip_higher && filter_var($ip_higher, FILTER_VALIDATE_IP, FILTER_FLAG_NO_RES_RANGE) == FALSE) {
       \Drupal::formBuilder()->setErrorByName('ip_higher', $form_state, t("IP range end is not a valid IP address."));
     }
-    elseif ($ip_lower == $this->own_ip || ($ip_higher && $this->manager->ip_ranges_check_range($ip_lower . '-' . $ip_higher, $this->own_ip))) {
+    elseif ((ip2long($ip_lower) <= ip2long($this->own_ip) && ip2long($ip_higher) >= ip2long($this->own_ip)) ||
+      ip2long($ip_lower) == ip2long($this->own_ip) ||
+      ip2long($ip_higher) == ip2long($this->own_ip)) {
       \Drupal::formBuilder()->setErrorByName('', $form_state, t("You may not block your own IP address"));
     }
 
