@@ -64,9 +64,9 @@ class IPRangesFormController extends ContentEntityForm implements ContentEntityF
     );
 
     if ($this->operation == 'edit') {
-      $form['type']['#default_value'] = $entity->getType();
-      $form['ip_lower']['#default_value'] = $entity->getIpLower();
-      $form['ip_higher']['#default_value'] = $entity->getIpHigher();
+      $form['type']['#default_value'] = long2ip($entity->getType());
+      $form['ip_lower']['#default_value'] = long2ip($entity->getIpLower());
+      $form['ip_higher']['#default_value'] = long2ip($entity->getIpHigher());
     }
 
     return parent::form($form, $form_state, $entity);
